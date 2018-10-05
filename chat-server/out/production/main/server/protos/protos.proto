@@ -1,0 +1,37 @@
+syntax = "proto2";
+
+package protos;
+
+message HelloWorld {
+    required string hello = 1;
+}
+
+message RegisterMessage {
+
+    required Sender sender = 1;
+    required Type type = 2;
+    required Stage stage = 3;
+    required string value = 4;
+
+    enum Sender {
+        REQUEST = 0;
+        REPLY = 1;
+    }
+
+    enum Type {
+        REGISTER = 0;
+        AUTH = 1;
+    }
+
+    enum Stage {
+        USERNAME = 0;
+        PASSWORD = 1;
+    }
+}
+
+message Message {
+
+    required string sender = 1;
+    required string message = 2;
+    optional string private = 3;
+}
