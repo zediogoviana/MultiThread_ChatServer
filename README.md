@@ -15,6 +15,10 @@ The messages are serialized using [protobuf](https://github.com/protocolbuffers/
 ## Client 
 
 After you have registered, you only get to see messages from that time forward. 
+
 If you are logging in, you can check all the messages that were sent while you were away.
+
+In ```config.properties``` insert the IP and Port for the client to connect to the server.
+
 
 ## Some things need yet to be improved/corrected.
