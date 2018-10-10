@@ -86,7 +86,7 @@ public class TreatClientRead implements Runnable
         return false;
     }
 
-    private void treatUser(){
+    private boolean treatUser(){
 
         boolean finished = false;
 
@@ -118,12 +118,15 @@ public class TreatClientRead implements Runnable
                     cos.flush();
 
                     if(finished){
-                        return;
+                        return finished;
                     }
                 }
             }
 
-        }catch (Exception e){e.printStackTrace();}
+        }catch (Exception e){}
+        finally {
+            return finished;
+        }
 
     }
 
@@ -154,12 +157,14 @@ public class TreatClientRead implements Runnable
         try {
             System.out.println("New Connection Received");
 
-            treatUser();
+            boolean status = treatUser();
 
-            Thread tr = new Thread( new TreatClientWrite(client, server) );
-            tr.start();
+            if(status) {
+                Thread tr = new Thread(new TreatClientWrite(client, server));
+                tr.start();
 
-            read();
+                read();
+            }
 
             System.out.println("Shutdown Output");
             cs.shutdownOutput();

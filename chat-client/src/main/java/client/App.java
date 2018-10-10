@@ -17,12 +17,13 @@ import protos.Protos.*;
 
 public class App {
 
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_RED = "\u001B[31m";
 
     private Socket cs;    
     private String username;
     private boolean logged;
 
-    private BufferedReader sin;
     private CodedOutputStream cos;
     private CodedInputStream cis;
     private Init initial;
@@ -32,7 +33,6 @@ public class App {
 
         this.initial = new Init();
         this.cs = this.connect();
-        this.sin = new BufferedReader( new InputStreamReader(System.in));
         this.cis = CodedInputStream.newInstance(cs.getInputStream());
         this.cos = CodedOutputStream.newInstance(cs.getOutputStream());
         this.logged = false;
@@ -152,7 +152,7 @@ public class App {
 
             Message mess = Message.parseFrom(ba);
 
-            System.out.println(mess.getSender() + ": " + mess.getMessage());
+            System.out.println(ANSI_RED + mess.getSender() + ": " + ANSI_RESET + mess.getMessage());
         }
     }
 
@@ -181,18 +181,21 @@ public class App {
         try {
 
             String s = chat.initial.printInit();
-            while(!chat.logged){
-
-                chat.initialize(s);
-                s = chat.readInitialize();
+            while(!chat.logged) {
+                if (s != null) {
+                    chat.initialize(s);
+                    s = chat.readInitialize();
+                }
             }
 
-            System.out.print("\033[H\033[2J");  //CLEAR;
+            if(s!= null) {
+                System.out.print("\033[H\033[2J");  //CLEAR;
 
-            Thread t = new Thread( new ClientWrite(chat.cs, chat.username) );
-            t.start();
+                Thread t = new Thread(new ClientWrite(chat.cs, chat.username));
+                t.start();
 
-            chat.readFromServer();
+                chat.readFromServer();
+            }
         } catch (Exception e){
             System.out.println("Server is Down");
         }
